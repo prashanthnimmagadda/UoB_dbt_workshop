@@ -79,4 +79,4 @@ The reproducible evidence query is stored in `analyses/product_profitability.sql
 
 ## Presentation
 
-The `presentation/` folder contains the editable deck, PDF export, speaking script, analytical chart, and final Cursor lineage image.
+The `presentation/` folder contains the editable deck, PDF export, analytical chart, and final Cursor lineage image.
