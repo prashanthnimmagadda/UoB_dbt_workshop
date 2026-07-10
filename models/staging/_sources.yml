@@ -1,0 +1,100 @@
+version: 2
+
+sources:
+  - name: jaffle_shop
+    description: Raw seed data for the Jaffle Shop coffee and baked goods business.
+    database: dbt-labs-501712
+    schema: uob_dbt_workshop_raw
+    tables:
+      - name: raw_customers
+        description: Customer records with unique identifiers and display names.
+        columns:
+          - name: id
+            description: Primary key for each customer.
+            data_tests:
+              - unique
+              - not_null
+          - name: name
+            description: Customer full name.
+
+      - name: raw_items
+        description: Line items sold on each order, linked to products by SKU.
+        columns:
+          - name: id
+            description: Primary key for each order line item.
+            data_tests:
+              - unique
+              - not_null
+          - name: order_id
+            description: Foreign key to the parent order.
+          - name: sku
+            description: Product SKU for the sold item.
+
+      - name: raw_orders
+        description: Order header records including totals and store assignment.
+        columns:
+          - name: id
+            description: Primary key for each order.
+            data_tests:
+              - unique
+              - not_null
+          - name: customer
+            description: Foreign key to the customer who placed the order.
+          - name: ordered_at
+            description: Timestamp when the order was placed.
+          - name: store_id
+            description: Foreign key to the store that fulfilled the order.
+          - name: subtotal
+            description: Order subtotal in cents before tax.
+          - name: tax_paid
+            description: Tax amount paid in cents.
+          - name: order_total
+            description: Total order amount in cents including tax.
+
+      - name: raw_products
+        description: Product catalog with pricing and type information.
+        columns:
+          - name: sku
+            description: Primary key for each product.
+            data_tests:
+              - unique
+              - not_null
+          - name: name
+            description: Product display name.
+          - name: type
+            description: Product category such as beverage or baked goods.
+          - name: price
+            description: Product price in cents.
+          - name: description
+            description: Product description shown to customers.
+
+      - name: raw_stores
+        description: Store locations with opening dates and tax rates.
+        columns:
+          - name: id
+            description: Primary key for each store.
+            data_tests:
+              - unique
+              - not_null
+          - name: name
+            description: Store display name.
+          - name: opened_at
+            description: Timestamp when the store opened.
+          - name: tax_rate
+            description: Sales tax rate applied at the store.
+
+      - name: raw_supplies
+        description: Supply items associated with products, including cost and perishability.
+        columns:
+          - name: id
+            description: Supply identifier; unique in combination with SKU.
+            data_tests:
+              - not_null
+          - name: name
+            description: Supply item name.
+          - name: cost
+            description: Supply cost in cents.
+          - name: perishable
+            description: Whether the supply item is perishable.
+          - name: sku
+            description: Product SKU the supply supports.
