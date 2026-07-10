@@ -1,0 +1,63 @@
+version: 2
+
+models:
+  - name: dim_product
+    description: >-
+      Product dimension at SKU grain. Combines product attributes with modeled
+      unit supply cost, gross profit, and gross margin.
+    columns:
+      - name: sku
+        description: Product SKU and primary key for the dimension.
+        data_tests:
+          - unique
+          - not_null
+      - name: product_name
+        description: Product display name.
+      - name: product_type
+        description: Product category, either beverage or jaffle in this dataset.
+      - name: product_description
+        description: Customer-facing description of the product.
+      - name: unit_price
+        description: Selling price of one product unit.
+      - name: unit_supply_cost
+        description: Sum of component supply costs for one modeled unit.
+      - name: modeled_unit_gross_profit
+        description: Unit price minus modeled unit supply cost.
+      - name: modeled_unit_gross_margin_pct
+        description: Modeled unit gross profit divided by unit price, expressed as a percentage.
+      - name: supply_component_count
+        description: Number of supply components assigned to the product.
+      - name: has_perishable_supply
+        description: True when at least one component is perishable.
+      - name: has_nonperishable_supply
+        description: True when at least one component is non-perishable.
+
+  - name: fct_product_profit_daily
+    description: >-
+      Daily product profitability fact at order-date and SKU grain. Summarises
+      unit sales, revenue, modeled supply cost, modeled gross profit, and margin.
+    data_tests:
+      - dbt_utils.unique_combination_of_columns:
+          arguments:
+            combination_of_columns:
+              - order_date
+              - sku
+    columns:
+      - name: order_date
+        description: Calendar date of the sales activity.
+        data_tests:
+          - not_null
+      - name: sku
+        description: Product SKU sold on the date.
+        data_tests:
+          - not_null
+      - name: units_sold
+        description: Count of sold-item rows for the date and SKU.
+      - name: revenue
+        description: Sum of product selling prices for units sold.
+      - name: modeled_supply_cost
+        description: Sum of modeled component supply costs for units sold.
+      - name: modeled_gross_profit
+        description: Revenue minus modeled supply cost.
+      - name: modeled_gross_margin_pct
+        description: Modeled gross profit divided by revenue, expressed as a percentage.
