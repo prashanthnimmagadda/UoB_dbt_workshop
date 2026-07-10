@@ -2,30 +2,32 @@
 
 ## Slide 1
 
-My question is: which products generate the most modeled gross profit, and is that result driven by sales volume, unit margin, or both?
+The question is: which products generate the most modeled gross profit, and is that driven by sales volume, unit margin, or both?
 
-I use the term modeled gross profit carefully. Each item row represents one unit sold. Revenue is the product price, and unit supply cost is the sum of the component costs assigned to that SKU. The model does not include labour, rent, discounts, or overhead.
+In this project, each item row is one unit sold. Revenue is the product price. Modeled gross profit is revenue minus the component supply costs assigned to the product. It does not include labour, rent, discounts, or overhead.
 
-The dataset contains 997 sold items across sixteen days. Those items generated $6,818 in revenue and $5,412.28 in modeled gross profit.
+The data contains 997 items sold over sixteen days. Those items generated $6,818 in revenue and $5,412.28 in modeled gross profit.
 
 ## Slide 2
 
-The dbt lineage makes the calculation traceable. Raw items provide the sale lines. Raw orders provide the date and order context. Raw products provide prices and product attributes. Raw supplies provide the component costs.
+dbt turns the raw data into a clear, repeatable pipeline. The source function connects the project to the raw items, orders, products, and supplies tables. The staging models rename fields, cast data types, and standardise the source data.
 
-The staging layer standardises those sources. The intermediate layer aggregates supply cost by SKU and calculates item-level economics. The final fact then publishes daily profitability by product. The saved analysis query sits directly downstream, so every presentation figure can be reproduced.
+The intermediate models then use ref to connect the cleaned models. One model calculates supply cost by SKU. The other joins each sold item to its order, product, and cost data. The final dimension gives one row per product, and the fact model gives one row per date and SKU.
+
+Using source and ref lets dbt build the models in the correct order and creates the lineage shown here. It also makes each result traceable back to the raw tables.
 
 ## Slide 3
 
-The chart separates sales volume from unit margin. Bubble size represents total modeled gross profit.
+The mart output is used directly for this chart. The x-axis shows units sold, the y-axis shows modeled gross margin, and bubble size shows total modeled gross profit.
 
-BEV-004 is the strongest product because it performs well on both dimensions. It sold 168 units, retained an 88.3 percent modeled margin, and generated $1,038.24 in modeled gross profit. That is 19.2 percent of the total.
+BEV-004 performs well on both volume and margin. It sold 168 units, had an 88.3 percent modeled margin, and generated $1,038.24 in modeled gross profit. That is 19.2 percent of the total.
 
-JAF-001 shows the opposite opportunity. It has the highest unit margin at 89 percent, but sold only 37 units. Its economics are strong, but its current volume is low.
+JAF-001 has the highest modeled margin at 89 percent, but sold only 37 units. This gives us a product with strong unit economics but lower sales volume.
 
 ## Slide 4
 
-My recommendation has two parts. First, protect BEV-004 availability because it is the largest current contributor. Second, run a controlled promotion for JAF-001 and measure whether extra demand increases gross profit without displacing stronger products.
+The recommendation is to protect BEV-004 availability and run a controlled promotion for JAF-001. The fact model can then be rerun to measure whether the promotion increases units and modeled gross profit.
 
-The result is supported by a clean dbt build. All 38 nodes passed, including 22 tests, and all 686 order subtotals reconciled to item revenue.
+The dbt tests cover four areas. Unique and not-null tests check the primary keys. A composite uniqueness test checks that the fact table has only one row per date and SKU. One business test proves that order subtotals equal the sum of item revenue. Another checks that gross profit and margin are calculated consistently.
 
-The limits are clear: one store, sixteen days of sales, and no operating-cost data. This is a product gross-profit model and a basis for a measured commercial test, not a long-term forecast.
+The full dbt build passed all 38 nodes, including 22 tests, and all 686 order subtotals reconciled. The main advantage is that the analysis is tested, documented, repeatable, and traceable. The limits are one store, sixteen days, and no operating-cost data.
