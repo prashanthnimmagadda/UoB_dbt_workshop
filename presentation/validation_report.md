@@ -31,6 +31,14 @@ Validated on 10 July 2026 from branch `workshop/product-profit-mart` against Big
 
 The four new BigQuery relations are views. The final fact grain is exactly one row per `order_date + sku`, and the dimension grain is exactly one row per SKU.
 
+## Tests used
+
+- `unique` and `not_null` tests on `int_product_supply_costs.sku`, `int_sales_lines.item_id`, and `dim_product.sku`
+- `not_null` tests on `fct_product_profit_daily.order_date` and `fct_product_profit_daily.sku`
+- A `dbt_utils.unique_combination_of_columns` test on `order_date + sku`
+- `assert_order_subtotals_match_item_revenue`, which checks each order subtotal against its item revenue
+- `assert_product_profit_math`, which checks positive units, non-negative revenue and cost, gross-profit arithmetic, and margin arithmetic
+
 ## Evidence used in the presentation
 
 - BEV-004 sold 168 units and generated $1,038.24 of modeled gross profit, equal to 19.2% of the total.
@@ -40,7 +48,7 @@ The four new BigQuery relations are views. The final fact grain is exactly one r
 
 ## Lineage and presentation QA
 
-Cursor lineage shows the relevant raw sources, six staging models, both intermediate models, the final fact model, and the saved analysis. The PowerPoint passed the automated overflow check. The four-slide PDF was rendered and visually reviewed page by page.
+Cursor lineage shows the relevant raw sources, six staging models, both intermediate models, the final fact model, and the saved analysis. The PowerPoint passed the automated overflow check. The four-slide PowerPoint and PDF were rendered and visually reviewed page by page. Slide 4 and the speaker script name the key, grain, subtotal, and calculation tests used.
 
 ## Known limitations
 
